@@ -1,0 +1,74 @@
+﻿@page "/categories"
+<h3>Categories  Component</h3>
+@inject NavigationManager navigationManager
+@inject UseCases.UseCasesInterfaces.IViewCategoriesUseCases ViewCategoriesUseCases;
+
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+@if(categories!= null)
+{
+        <table style="width:100%">
+            <thead>
+                 <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th></th>
+
+            </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in categories) {
+                  <tr>
+                      <td>@category.Name </td>
+                      
+                      <td>@category.Description </td>
+                      <td><button type="button" class="btn btn-warning" @onclick= "() => EditCategory(category)" > Edit </button></td>
+                      <td><button type="button" class="btn btn-danger" @onclick= "() => deleteCategory(category)" > Delete </button></td>
+                      
+                  </tr>  
+                   <br />
+                }
+   
+            </tbody>
+
+        </table>
+}
+<br />
+<button type="button" class="btn btn-info" @onclick="onClickAddCategory"> Add Category</button>
+@code {
+    private List<Category> categories;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        categories = ViewCategoriesUseCases.Execute().ToList();
+    }
+    private void onClickAddCategory()
+    {
+        navigationManager.NavigateTo("/addcategory");
+
+    }
+    protected void EditCategory(Category category)
+    {
+        navigationManager.NavigateTo($"/editcategory/{category.Id}");
+    }
+    protected void deleteCategory(Category category)
+    {
+        navigationManager.NavigateTo($"/deletecategory/{category.Id}");
+        
+    }
+}
