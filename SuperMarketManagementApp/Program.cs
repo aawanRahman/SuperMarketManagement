@@ -12,12 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<IaddCategoryUseCase, addCategoryUseCase>();
 builder.Services.AddTransient<IViewCategoriesUseCases, ViewCategoriesUseCases>();
 builder.Services.AddTransient<IeditCategoryUseCase, editCategoryUseCase>();
 builder.Services.AddTransient<IGetCategoryByIdUseCase, GetCategoryByIdUseCase>();
-builder.Services.AddTransient<IDeleteCategoryUseCase, DeleteCategoryUseCase>();
+builder.Services.AddScoped<IDeleteCategoryUseCase, DeleteCategoryUseCase>();
 
 
 

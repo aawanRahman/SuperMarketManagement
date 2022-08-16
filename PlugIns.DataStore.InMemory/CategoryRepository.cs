@@ -33,9 +33,17 @@ namespace PlugIns.DataStore.InMemory
         public void addCategory(Category category)
         {
             if (categories.Any(x => x.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase))) return;
-            var id = categories.Max(x => x.Id);
-            category.Id = id+1;
-            categories.Add(category);
+            if (categories != null && categories.Count > 0)
+            {
+                var id = categories.Max(x => x.Id);
+                category.Id = id + 1;
+                categories.Add(category);
+            }
+            else
+            {
+                category.Id =  1;
+                categories.Add(category);
+            }
 
         }
 
