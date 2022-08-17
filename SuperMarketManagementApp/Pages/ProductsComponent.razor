@@ -1,0 +1,68 @@
+﻿@page "/products"
+@using UseCases.UseCasesInterfaces
+<h3>ProductsComponent</h3>
+@inject IViewProductUseCase ViewProductUseCase
+@inject IGetCategoryByIdUseCase  GetCategoryByIdUse
+@inject NavigationManager navigationManager
+
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+@if(products!=null)
+{
+    <table>
+        <thead>
+            <tr>
+                <th> Product Name</th>
+                <th> Category</th>
+                <th> Price</th>
+                <th> Quantity</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td> @product.Name</td>
+                    <td>@GetCategoryByIdUse.getCategorybyId(product.CategoryId.Value)?.Name </td>
+                    <td> @product.Price.Value</td>
+                    <td> @product.Quantity.Value</td>
+
+                </tr>
+                
+            }
+
+
+        </tbody>
+
+    </table>
+}
+<br />
+<button type="button" class="btn btn-info" @onclick="onClickAddProduct"> Add Product</button>
+@code {
+    private IEnumerable<Product> products;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        products = ViewProductUseCase.ViewAllProducts();
+    }
+    protected void onClickAddProduct()
+    {
+         navigationManager.NavigateTo("/addproduct");
+    }
+}

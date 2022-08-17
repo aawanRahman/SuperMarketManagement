@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Components.Web;
 using PlugIns.DataStore.InMemory;
 using SuperMarketManagementApp.Data;
 using UseCases;
+using UseCases.CategoriesUseCases;
 using UseCases.DataStorePluginInterfaces;
+using UseCases.ProductsUseCase;
 using UseCases.UseCasesInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,11 +15,14 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
+builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IaddCategoryUseCase, addCategoryUseCase>();
 builder.Services.AddTransient<IViewCategoriesUseCases, ViewCategoriesUseCases>();
 builder.Services.AddTransient<IeditCategoryUseCase, editCategoryUseCase>();
 builder.Services.AddTransient<IGetCategoryByIdUseCase, GetCategoryByIdUseCase>();
-builder.Services.AddScoped<IDeleteCategoryUseCase, DeleteCategoryUseCase>();
+builder.Services.AddTransient<IDeleteCategoryUseCase, DeleteCategoryUseCase>();
+builder.Services.AddTransient<IViewProductUseCase, ViewProductUseCase>();
+builder.Services.AddTransient<IAddProductUseCase, AddProductUseCase>();
 
 
 
