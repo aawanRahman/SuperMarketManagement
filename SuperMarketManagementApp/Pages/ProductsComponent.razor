@@ -31,6 +31,8 @@ tr:nth-child(even) {
                 <th> Category</th>
                 <th> Price</th>
                 <th> Quantity</th>
+                <th></th>
+                
 
             </tr>
         </thead>
@@ -42,6 +44,8 @@ tr:nth-child(even) {
                     <td>@GetCategoryByIdUse.getCategorybyId(product.CategoryId.Value)?.Name </td>
                     <td> @product.Price.Value</td>
                     <td> @product.Quantity.Value</td>
+                    <td><button type="button" class="btn btn-warning" @onclick= "() => EditProduct(product)" > Edit </button>
+                     <button type="button" class="btn btn-danger" @onclick= "() => deleteProduct(product)" > Delete </button></td>
 
                 </tr>
                 
@@ -63,6 +67,15 @@ tr:nth-child(even) {
     }
     protected void onClickAddProduct()
     {
-         navigationManager.NavigateTo("/addproduct");
+        navigationManager.NavigateTo("/addproduct");
+    }
+    protected void EditProduct(Product product)
+    {
+         navigationManager.NavigateTo($"/editproduct/{product.Id}");
+
+    }
+    private void deleteProduct(Product product)
+    {
+        navigationManager.NavigateTo($"/deleteproduct/{product.Id}");
     }
 }

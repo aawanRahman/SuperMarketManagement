@@ -39,6 +39,23 @@ namespace PlugIns.DataStore.InMemory
             _products.Add(product);
         }
 
+        public void deleteProduct(Product product)
+        {
+            _products.Remove(product);
+        }
+
+        public void editProduct(Product product)
+        {
+            var editedProduct = _products?.FirstOrDefault(n => n.Id == product.Id);
+            if(editedProduct != null)
+            {
+                editedProduct.Name = product.Name;
+                editedProduct.Price = product.Price;
+                editedProduct.Quantity = product.Quantity;
+                editedProduct.CategoryId = product.CategoryId;
+            }
+        }
+
         public IEnumerable<Product> GetAllProducts()
         {
             return _products;
@@ -46,7 +63,8 @@ namespace PlugIns.DataStore.InMemory
 
         public Product GetProductById(int id)
         {
-            throw new NotImplementedException();
+            var product = _products?.FirstOrDefault(x => x.Id == id);
+            return product;
         }
     }
 }
