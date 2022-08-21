@@ -1,0 +1,78 @@
+﻿
+@inject UseCases.UseCasesInterfaces.IViewProductsByCategoryId viewProductsByCategoryId
+@inject UseCases.UseCasesInterfaces.IViewCategoriesUseCases viewCategoriesUseCases
+<div class ="form-group" style="padding : 5px" >
+    <label for="category"> Category</label>
+    <select id="category"  @bind= "SelectCategoryId" class="form-control">
+        <option selected></option>
+        @foreach (var category in categories)
+        {
+            <option value="@category.Id"> @category.Name</option>
+        }
+
+    </select>
+</div>
+<br />
+@if( productsInCategory != null) {
+    <div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th> Product Name</th>
+                <th> Quantity Left</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in productsInCategory)
+            {
+                <tr onclick="@(()=> OnSelectProduct(product))"
+                    style="@(product.Id == selectProductId?"background-color: beige;cursor:pointer " :"cursor:pointer")">
+                    <td> @product.Name</td>
+                    <td> @product.Quantity</td>
+                </tr>
+                
+            }
+
+        </tbody>
+
+    </table>
+
+    </div>
+}
+
+@code {
+    private int selectCategoryId;
+    private int selectProductId;
+    private IEnumerable<Product> productsInCategory;
+    private IEnumerable<Category> categories;
+    [Parameter]
+    public EventCallback<Product> OnProductSelected { get; set; }
+    private int SelectCategoryId
+    {
+        get
+        {
+            return selectCategoryId;
+        }
+        set
+        {
+            selectCategoryId = value;
+            productsInCategory = viewProductsByCategoryId.VewProductsByCategoryId(value);
+            StateHasChanged();
+
+        }
+
+    }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        categories = viewCategoriesUseCases.Execute();
+        StateHasChanged();
+    }
+    private void OnSelectProduct(Product product) {
+        selectProductId = product.Id;
+        OnProductSelected.InvokeAsync(product);
+
+
+    }
+
+}

@@ -1,0 +1,72 @@
+﻿@inject UseCases.DataStorePluginInterfaces.IProductRepository productRepository
+<h3>Sell Product</h3>
+
+@if(productToSell != null) {
+    <EditForm Model="@productToSell" OnValidSubmit="SellProduct">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <ValidationSummary></ValidationSummary>
+    <div class="form-group" style="padding:5px">
+        <label for = "name"> Product Name</label>
+        <input class="form-control"  type="text" readonly value="@productToSell.Name"/>
+    </div>
+
+    <div class="form-group" style="padding:5px">
+        <label for = "price"> Price</label>
+        <Input class="form-control"  type="text" id="price" readonly Value="@(string.Format("{0:c}", productToSell.Price))"/>
+    </div>
+    <div class="form-group" style="padding:5px">
+        <label for = "quantity"> Quantity</label>
+        <input class="form-control"  type="number" id="quantity"  @bind-value="productToSell.Quantity"/>
+    </div>
+    <button type="submit" class="btn btn-primary" > Sell </button>
+    </EditForm>
+    <Br/>
+     @if(erroMessage != null)
+     {
+        <div class="alert alert-danger"> @erroMessage</div>
+    }
+    
+}
+
+
+@code {
+    public Product productToSell;
+    private string erroMessage;
+
+    [Parameter]
+    public Product SelectedProduct { get; set; }
+    [Parameter]
+    public EventCallback<Product> OnProductSold { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if(SelectedProduct!= null)
+        {
+            productToSell = new Product()
+            {
+                Id = SelectedProduct.Id,
+                Name = SelectedProduct.Name,
+                CategoryId = SelectedProduct.CategoryId,
+                Price = SelectedProduct.Price,
+                Quantity = 0
+            };
+        }
+
+    }
+
+    private void SellProduct()
+    {
+        var product = productRepository.GetProductById(productToSell.Id);
+        if(product.Quantity >= productToSell.Quantity)
+        {
+            OnProductSold.InvokeAsync(product);
+            erroMessage = string.Empty;  
+        }
+        else
+        {
+            erroMessage = $"{product.Name} has only {product.Quantity} items left. It is not enough";  
+        }
+    }
+    
+}
