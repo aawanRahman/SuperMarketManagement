@@ -1,0 +1,107 @@
+﻿@page "/transaction"
+@inject UseCases.UseCasesInterfaces.IGetTransactionsUseCase getTransactionsUseCase;
+@inject UseCases.UseCasesInterfaces.IGetTodayTransactionUseCase getTodayTransactionUseCase;
+@inject UseCases.DataStorePluginInterfaces.IProductRepository productRepository;
+@inject UseCases.DataStorePluginInterfaces.ITransactionRepository transactionRepository;
+
+<style>
+table1 {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+
+</style>
+
+<div class="row">
+    <div class="col-4">
+        <label for="cashier_name">Cashier Name</label>
+        <input  type="text" @bind-value="cashierName" class="form-control"/>
+    </div>
+    <div class="col-3">
+        <label for="startDate"> StartDate</label>
+        <input  type= "date" @bind-value="startDate" class="form-control"/>
+    </div>
+    <div class="col-3">
+        <label for="endDate"></label>
+        <input  type="date" @bind-value="endDate" class="form-control"/>
+    </div>
+    <div class="col-2">
+        <button type="button" class="btn btn-primary" @onclick="LoadTransaction">Search</button>
+    </div>
+</div>
+<br />
+@if (transactions != null)
+{
+    <table class="table1">
+    <thead>
+        <tr>
+            <th style="background-color: #04AA6D; color: white">Cashier Name</th>
+            <th style="background-color: #04AA6D; color: white">Product Name</th>
+            <th style="background-color: #04AA6D; color: white">Date Time</th>
+            <th style="background-color: #04AA6D; color: white">Qty Before</th>
+            <th style="background-color: #04AA6D; color: white">Qty Sold</th>
+            <th style="background-color: #04AA6D; color: white">Qty After Sold</th>
+            <th style="background-color: #04AA6D; color: white">Total Price</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var transaction in transactions)
+        {
+            <tr>
+                <td> @transaction.CashierName</td>
+                <td> @productRepository.GetProductById(transaction.ProductId).Name</td>
+                <td> @transaction.TimeStamp.Date</td>
+                <td> @(transaction.BeforeQuantity +transaction.SoldQuantity) </td>
+                <td> @transaction.SoldQuantity</td>
+                <td> @(transaction.BeforeQuantity)</td>
+                <td> @(string.Format("{0:c}", transaction.Price))</td>
+
+            </tr>
+            
+        }
+       
+    </tbody>
+    <tfoot>
+
+        <tr>
+            
+            <td colspan="6"> <b>&nbsp; Total Received Price</b></td>
+            <td><b style="color:rebeccapurple">@(string.Format("{0:c}", transactions.Sum(x=>x.Price)))</b> </td>
+           
+
+        </tr>
+    </tfoot>
+
+
+</table>
+}
+
+@code {
+    private string cashierName;
+    private DateTime startDate;
+    private DateTime endDate;
+    private IEnumerable<Transaction> transactions;
+
+    public void LoadTransaction()
+    {
+        transactions = getTransactionsUseCase.Execute(cashierName, startDate, endDate);
+
+    }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        startDate = DateTime.Today;
+        endDate = DateTime.Today;
+        transactions = transactionRepository.Get("");
+    }
+
+}
