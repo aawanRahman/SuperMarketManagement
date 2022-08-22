@@ -1,0 +1,65 @@
+﻿@inject UseCases.UseCasesInterfaces.IGetTodayTransactionUseCase getTodayTransactionUseCase;
+@inject UseCases.DataStorePluginInterfaces.IProductRepository productRepository;
+
+<style>
+table1 {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+
+</style>
+@if (transactions != null)
+{
+    <table class="table1">
+    <thead>
+        <tr>
+            <th style="background-color: #04AA6D; color: white">Cashier Name</th>
+            <th style="background-color: #04AA6D; color: white">Product Name</th>
+            <th style="background-color: #04AA6D; color: white">Date Time</th>
+            <th style="background-color: #04AA6D; color: white">Qty Before</th>
+            <th style="background-color: #04AA6D; color: white">Qty Sold</th>
+            <th style="background-color: #04AA6D; color: white">Qty After Sold</th>
+            <th style="background-color: #04AA6D; color: white">Total Price</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var transaction in transactions)
+        {
+            <tr>
+                <td> @transaction.CashierName</td>
+                <td> @productRepository.GetProductById(transaction.ProductId).Name</td>
+                <td> @transaction.TimeStamp.Date</td>
+                <td> @(transaction.BeforeQuantity +transaction.SoldQuantity) </td>
+                <td> @transaction.SoldQuantity</td>
+                <td> @(transaction.BeforeQuantity)</td>
+                <td> @(string.Format("{0:c}", transaction.Price))</td>
+
+
+            </tr>
+            
+        }
+       
+    </tbody>
+
+
+</table>
+}
+@code {
+    private IEnumerable<Transaction> transactions;
+    public void LoadTransaction(string cashierName)
+    {
+        transactions = getTodayTransactionUseCase.Execute(cashierName);
+        StateHasChanged();
+
+    }
+
+}

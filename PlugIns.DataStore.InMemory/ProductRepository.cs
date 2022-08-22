@@ -72,5 +72,17 @@ namespace PlugIns.DataStore.InMemory
            return _products?.Where(x => x.CategoryId == categoryId);
            
         }
+
+        public void UpdateProduct(Product product)
+        {
+            var editedProduct = _products?.FirstOrDefault(n => n.Id == product.Id);
+            if (editedProduct != null)
+            {
+                editedProduct.Name = product.Name;
+                editedProduct.Price = product.Price;
+                editedProduct.Quantity = product.Quantity;
+                editedProduct.CategoryId = product.CategoryId;
+            }
+        }
     }
 }

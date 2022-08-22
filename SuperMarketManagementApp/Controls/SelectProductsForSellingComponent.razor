@@ -57,6 +57,7 @@
         {
             selectCategoryId = value;
             productsInCategory = viewProductsByCategoryId.VewProductsByCategoryId(value);
+            OnSelectProduct(null);
             StateHasChanged();
 
         }
@@ -66,11 +67,13 @@
     {
         base.OnInitialized();
         categories = viewCategoriesUseCases.Execute();
+       
         StateHasChanged();
     }
     private void OnSelectProduct(Product product) {
-        selectProductId = product.Id;
-        OnProductSelected.InvokeAsync(product);
+        
+      OnProductSelected.InvokeAsync(product);
+      if(product != null) selectProductId = product.Id;
 
 
     }
