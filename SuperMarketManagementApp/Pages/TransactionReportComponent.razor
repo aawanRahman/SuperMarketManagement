@@ -3,6 +3,7 @@
 @inject UseCases.UseCasesInterfaces.IGetTodayTransactionUseCase getTodayTransactionUseCase;
 @inject UseCases.DataStorePluginInterfaces.IProductRepository productRepository;
 @inject UseCases.DataStorePluginInterfaces.ITransactionRepository transactionRepository;
+@inject IJSRuntime jsRuntime;
 
 <style>
 table1 {
@@ -20,27 +21,36 @@ tr:nth-child(even){background-color: #f2f2f2}
 
 </style>
 
-<div class="row">
-    <div class="col-4">
+@if (transactions != null)
+{
+    <div id="print_area">
+        <div class="row">
+    <div class="col-3">
         <label for="cashier_name">Cashier Name</label>
         <input  type="text" @bind-value="cashierName" class="form-control"/>
     </div>
-    <div class="col-3">
-        <label for="startDate"> StartDate</label>
+    <div class="col-2">
+        <label for="startDate"> Start Date</label>
         <input  type= "date" @bind-value="startDate" class="form-control"/>
     </div>
-    <div class="col-3">
-        <label for="endDate"></label>
+    <div class="col-2">
+        <label for="endDate">End Date</label>
         <input  type="date" @bind-value="endDate" class="form-control"/>
     </div>
     <div class="col-2">
+        <label> &nbsp;</label>
+       <br/>
         <button type="button" class="btn btn-primary" @onclick="LoadTransaction">Search</button>
     </div>
+    <div class="col-2">
+       <label> &nbsp;</label>
+        <br/>
+        <button type="button" class="btn btn-primary" @onclick="PrintReport">Print</button>
+    </div>
 </div>
-<br />
-@if (transactions != null)
-{
-    <table class="table1">
+        <br />
+
+        <table class="table1">
     <thead>
         <tr>
             <th style="background-color: #04AA6D; color: white">Cashier Name</th>
@@ -51,38 +61,34 @@ tr:nth-child(even){background-color: #f2f2f2}
             <th style="background-color: #04AA6D; color: white">Qty After Sold</th>
             <th style="background-color: #04AA6D; color: white">Total Price</th>
         </tr>
-
     </thead>
     <tbody>
         @foreach (var transaction in transactions)
         {
             <tr>
-                <td> @transaction.CashierName</td>
-                <td> @productRepository.GetProductById(transaction.ProductId).Name</td>
-                <td> @transaction.TimeStamp.Date</td>
-                <td> @(transaction.BeforeQuantity +transaction.SoldQuantity) </td>
-                <td> @transaction.SoldQuantity</td>
-                <td> @(transaction.BeforeQuantity)</td>
-                <td> @(string.Format("{0:c}", transaction.Price))</td>
+                <td style="text-align:center"> @transaction.CashierName</td>
+                <td style="text-align:center"> @productRepository.GetProductById(transaction.ProductId).Name</td>
+                <td style="text-align:center"> @transaction.TimeStamp.Date</td>
+                <td style="text-align:center"> @(transaction.BeforeQuantity +transaction.SoldQuantity) </td>
+                <td style="text-align:center"> @transaction.SoldQuantity</td>
+                <td style="text-align:center"> @(transaction.BeforeQuantity)</td>
+                <td style="text-align:center"> @(string.Format("{0:c}", transaction.Price))</td>
 
-            </tr>
-            
-        }
-       
+            </tr>     
+        }    
     </tbody>
     <tfoot>
-
-        <tr>
-            
+        <tr>   
             <td colspan="6"> <b>&nbsp; Total Received Price</b></td>
             <td><b style="color:rebeccapurple">@(string.Format("{0:c}", transactions.Sum(x=>x.Price)))</b> </td>
            
 
         </tr>
     </tfoot>
-
-
 </table>
+
+    </div>
+    
 }
 
 @code {
@@ -102,6 +108,12 @@ tr:nth-child(even){background-color: #f2f2f2}
         startDate = DateTime.Today;
         endDate = DateTime.Today;
         transactions = transactionRepository.Get("");
+    }
+    private void PrintReport()
+    {
+        jsRuntime.InvokeVoidAsync("print");
+
+
     }
 
 }
